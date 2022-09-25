@@ -155,5 +155,5 @@ class App:
         self.root.mainloop()
 
 f = App()
-# f.fetch()
+f.fetch()
 f.gui()
