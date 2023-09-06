@@ -2,3 +2,4 @@ requests==2.27.1
 beautifulsoup4==4.11.1
 tk==0.1.0
 ttkthemes==3.2.2
+lxml==4.9.3

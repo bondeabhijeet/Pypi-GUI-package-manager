@@ -99,5 +99,5 @@ class Updater:
 
         self.root.mainloop()
 
-# Testing        
-app = Updater()
+# # Testing        
+# app = Updater()

@@ -7,6 +7,7 @@ from ttkthemes import ThemedStyle
 import installed as INST
 import subprocess
 import terminal as TER
+import updates as UPDT
 
 class App:
     def __init__(self):
@@ -27,8 +28,11 @@ class App:
         # self.style.theme_use('adapta')
         # self.text = TER.terminal_maker(self.root)
         # self.text.config(state="disabled")
-        self.package_no = 0                                 # Num,ber of packages
+        self.package_no = 0                                 # Number of packages
 
+# Implementation to create an object of updater class from updates.py file to intialize the updater menu in tkinter
+    def updatess(self):
+        Apps = UPDT.Updater()
 
 # Implementation for dark mode using the "equilux" theme
     def darkmd(self):
@@ -150,7 +154,7 @@ class App:
         bt_darkmd = ttk.Button(self.root, text="Darkmode", command=self.darkmd) # Dark mode button
         bt_darkmd.place(x=870, y=5, width=120, height=25)
 
-        update_butt = ttk.Button(self.root, text="Updates", command=self.darkmd)# Updates tab (To be integrated)
+        update_butt = ttk.Button(self.root, text="Updates", command=self.updatess)# Updates tab (To be integrated)
         update_butt.place(x=870, y=460, width=120, height=25)
         self.root.mainloop()
 
