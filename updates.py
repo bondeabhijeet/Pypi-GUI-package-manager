@@ -73,6 +73,8 @@ class Updater:
         self.root = Tk()                        # Root tkinter window
         self.style = ThemedStyle(self.root)     # To use themes
         self.style.theme_use("adapta")          # "adapta" theme used
+        self.root.title("Upgrade libraries")
+        # self.root.iconbitmap("favicon.ico")
         self.text = tk.Text(self.root)
         # self.text1 = TER.terminal_maker(self.root)
 
