@@ -59,7 +59,7 @@
 
 <p>The application will open, and you can start searching for, installing, and upgrading Python packages from PyPI with ease.</p>
 
-<h3> Building the .exe (--onefile) or an uncompressed folder (--onedir)</h3>
+<h2> Building the .exe (--onefile) or an uncompressed folder (--onedir)</h2>
 <p>
     Using PyInstaller to create a standalone executable from a Python script
     <ol>
