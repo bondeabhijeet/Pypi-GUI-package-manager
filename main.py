@@ -11,6 +11,7 @@ import updates as UPDT
 
 class App:
     def __init__(self):
+        print("Firing up the application!")
         self.fetch_list = "https://pypi.org/simple/"        # PYPI request URL
         self.fetched_data = "fetched_html.html"             # filename for html code fetched from pypi
         self.stark = {}
@@ -60,6 +61,7 @@ class App:
 
 # Function to make a request to pypi and get all the package's names
     def fetch(self):
+        print("Fetching the data!")
         response = requests.get(self.fetch_list).text   # make the request
         print("Request completed")
         with open(self.fetched_data, 'w') as f:         # write the fetched HTML code to a html file
@@ -67,9 +69,11 @@ class App:
         self.json_maker()                               # Parse the html file and create a json file
         print("JSON file created")
 
+        # self.root.iconbitmap("favicon.ico")             # Setting custom icon to the window
+
 # Implementation to make a json file from html file    
     def json_maker(self):
-        print("Creating JSON file")
+        print("Creating JSON file [may take few seconds...]")
         with open(self.fetched_data, 'r') as f:             # reading the html file
             self.html_data = f.read()
         
