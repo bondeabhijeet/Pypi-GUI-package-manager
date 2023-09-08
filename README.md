@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>PyPI GUI Package Manager</title>
+    PyPI GUI Package Manager
 </head>
 
 <body>
@@ -58,6 +58,26 @@
 <pre><code>python main.py</code></pre>
 
 <p>The application will open, and you can start searching for, installing, and upgrading Python packages from PyPI with ease.</p>
+
+<h3> Building the .exe (--onefile) or an uncompressed folder (--onedir)</h3>
+<p>
+    Using PyInstaller to create a standalone executable from a Python script
+    <ol>
+        <li>PyInstaller Installation: Before you can use PyInstaller, you need to have it installed. You can install it using pip:</li>
+    </ol>
+    <pre><code>pip install pyinstaller</code></pre>
+    <ol start="2">
+        <li>Open the terminal or command prompt, navigate to the directory containing your main.py and favicon.ico files, and then run the PyInstaller command:</li>
+        <br>
+        for onedir (will generate a folder containing a exe and the unpacked files) <a href="https://pyinstaller.org/en/stable/operating-mode.html#how-the-one-file-program-works">refer</a>:
+        <pre><code>pyinstaller --name pypi-gui-package-manager --icon=favicon.ico --onedir main.py</code></pre>
+        for onefile:
+        <pre><code>pyinstaller --name pypi-gui-package-manager --icon=favicon.ico --onefile main.py</code></pre>
+    </ol>
+    After running this command, PyInstaller will generate a standalone executable in the dist directory within your current working directory. The name of the executable will be "pypi-gui-package-manager".
+    You can then distribute this executable to others who can run it without needing to install Python or any additional dependencies.
+</p>
+
 
 <!-- <h2>Screenshots</h2>
 
