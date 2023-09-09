@@ -24,11 +24,12 @@ class Updater:
         
     # Checking for updates
     def CheckUpdates(self):
+        self.sess = requests.Session()            # Creating a session for the multiple requests that are going to be made to check updates of each and every package
         
         self.statusIndicator.configure(text="Status: Checking for updates") # Updating the status on the label
         for lib in self.installed_libs:                                     # itterating through installed libraries
             
-            self.root.update_idletasks()
+            self.UPDroot.update_idletasks()
             self.pb1['value'] += self.update_len
             self.lab.configure(text=f"{lib[0]}")
             try:                                                            # tring to get the latest version of the installed library
@@ -52,9 +53,9 @@ class Updater:
             self.statusIndicator.configure(text=f"Status: Updates are available ({len(self.update_required)})")
 
         for lib in self.update_required:                # Creating buttons and lables for all the packages that need to be update 
-            button = ttk.Button(text=f"Update", command=lambda i=lib: self.upgrade_lib(i))  # Buttons binded with button id so as to know which button is pressed to upgrade the package
+            button1 = ttk.Button(self.UPDroot, text=f"Update", command=lambda i=lib: self.upgrade_lib(i))  # Buttons binded with button id so as to know which button is pressed to upgrade the package
             # self.statusIndicator.configure(text=f"Status: upgraded {i}")
-            self.text.window_create("end", window=button)   # Creating a window to display button and label
+            self.text.window_create("end", window=button1)   # Creating a window to display button and label
             self.text.insert("end", f"\t{lib}\n")           # Inserting the button and label combo inside the window created
     
     # def UpdateAll(self):
@@ -70,36 +71,36 @@ class Updater:
         self.installed_libs = INST.clean_version()
         self.update_len = 100/(len((self.installed_libs)))  # For creating the progress bar to display how many libraries are checked
 
-        self.root = Tk()                        # Root tkinter window
-        self.style = ThemedStyle(self.root)     # To use themes
+        self.UPDroot = Tk()                        # UPDroot tkinter window
+        self.style = ThemedStyle(self.UPDroot)     # To use themes
         self.style.theme_use("adapta")          # "adapta" theme used
-        self.root.title("Upgrade libraries")
-        # self.root.iconbitmap("favicon.ico")
-        self.text = tk.Text(self.root)
-        # self.text1 = TER.terminal_maker(self.root)
+        self.UPDroot.title("Upgrade libraries")
+        # self.UPDroot.iconbitmap("favicon.ico")
+        self.text = tk.Text(self.UPDroot)
+        # self.text1 = TER.terminal_maker(self.UPDroot)
 
-        self.root["bg"] = "white"               # Setting the background color to white
+        self.UPDroot["bg"] = "white"               # Setting the background color to white
 
-        self.sess = requests.Session()          # Creating a session for the multiple requests that are going to be made to check updates of each and every package
+        # self.sess = requests.Session()          # Creating a session for the multiple requests that are going to be made to check updates of each and every package
         self.update_required = []               # A list of all the packages that will need update (filled later on)
 
-        self.lab = ttk.Label(self.root, text=f"Updates")    # Label
+        self.lab = ttk.Label(self.UPDroot, text=f"Updates")    # Label
         self.lab.pack(padx=20, pady=10)
 
-        self.pb1 = ttk.Progressbar(self.root, orient=HORIZONTAL, length=400, mode='determinate')    # Progress bar to indicate the progress of checking updates
+        self.pb1 = ttk.Progressbar(self.UPDroot, orient=HORIZONTAL, length=400, mode='determinate')    # Progress bar to indicate the progress of checking updates
         self.pb1.pack(expand=True)      # expand: https://stackoverflow.com/questions/28089942/difference-between-fill-and-expand-options-for-tkinter-pack-method
 
-        self.statusIndicator = ttk.Button(self.root, text='Start', command=self.CheckUpdates).pack(pady=5)  # Button to start checking for updates
-        self.statusIndicator = ttk.Label(self.root, text=f"Status: Idle")                                   # Updating the status on the label
+        self.statusIndicator = ttk.Button(self.UPDroot, text='Start', command=self.CheckUpdates).pack(pady=5)  # Button to start checking for updates
+        self.statusIndicator = ttk.Label(self.UPDroot, text=f"Status: Idle")                                   # Updating the status on the label
         self.statusIndicator.pack(padx=20, pady=10)
 
         # Implementation of scroll bar binding it with the list of buttons and labels
         self.text.pack(side="left")
-        self.sb = ttk.Scrollbar(self.root, command=self.text.yview)
+        self.sb = ttk.Scrollbar(self.UPDroot, command=self.text.yview)
         self.sb.pack(side="right", fill=Y)
         self.text.configure(yscrollcommand=self.sb.set)
 
-        self.root.mainloop()
+        self.UPDroot.mainloop()
 
 # # Testing        
 # app = Updater()
