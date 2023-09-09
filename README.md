@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    PyPI GUI Package Manager
-</head>
-
 <body>
 
 <h1>PyPI GUI Package Manager</h1>
 
 <img src="https://img.shields.io/github/stars/bondeabhijeet/Pypi-GUI-package-manager?style=social" alt="GitHub stars"> <img src="https://img.shields.io/github/forks/bondeabhijeet/Pypi-GUI-package-manager?style=social" alt="GitHub forks"> <img src="https://img.shields.io/github/issues/bondeabhijeet/Pypi-GUI-package-manager" alt="GitHub issues"> <img src="https://img.shields.io/github/license/bondeabhijeet/Pypi-GUI-package-manager" alt="GitHub license">
+<br>
+![pypi-gui](https://github.com/bondeabhijeet/Pypi-GUI-package-manager/blob/main/pypi-GIF.gif)
 
 <p>The PyPI GUI Package Manager is a simple and user-friendly graphical interface for managing Python packages from the Python Package Index (PyPI). It provides an intuitive way to search for packages, install, and upgrade them without needing to use the command line.</p>
 
