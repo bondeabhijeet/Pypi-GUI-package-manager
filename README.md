@@ -104,6 +104,7 @@
     <li><strong>Package Version Selection:</strong> Choose the version of a package to install or upgrade.</li>
     <li><strong>Dependency Resolution:</strong> Automatically resolves and installs package dependencies.</li>
     <li><strong>Virtual Environments:</strong> Option to install packages in a virtual environment for isolation.</li>
+    <li><strong>GUI: Update the GUI to custom tkinter.</li> 
 </ul>
 
 <p>Happy coding!</p>
