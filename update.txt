@@ -1,5 +1,0 @@
-beautifulsoup4
-charset-normalizer
-lxml
-requests
-urllib3
