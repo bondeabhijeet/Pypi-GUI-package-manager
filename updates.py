@@ -50,7 +50,8 @@ class Updater:
             
             self.UPDroot.update_idletasks()
             self.progress_bar['value'] += self.update_len
-            self.label_updates.configure(text=f"          {lib[0]}          ")
+            
+            self.label_updates.configure(text=f"                {lib[0]}               ")
             try:                                                            # tring to get the latest version of the installed library
                 latest_version = self.sess.get(f'https://pypi.org/pypi/{lib[0]}/json').json()['info']['version']    # Request is done using session
                 if lib[1] == latest_version:            # If the installed version of library is same as latest version
