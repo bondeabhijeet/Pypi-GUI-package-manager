@@ -1,9 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import json
-import tkinter as tk
-from tkinter import Label, ttk
-from ttkthemes import ThemedStyle
+import customtkinter as tk
 import installed as INST
 import subprocess
 import terminal as TER
@@ -17,47 +15,30 @@ class App:
         self.stark = {}
         self.storage = "storage.json"                       # Json filename in which all the pip package names are stored
         
-        self.root = tk.Tk()                                 # Root window for tkinter
+        self.root = tk.CTk()                                 # Root window for tkinter
         self.root.title("Pip manager - GUI")                # Title for the window
-        self.root.geometry("1000x800")                      # Size for the window
+        self.root.geometry("1100x800")                      # Size for the window
         self.root.resizable('False', 'False')               # Non-resizable
-        self.disableDarkmd()                                # by default light mode is enabled
+        
+        self.mode_swtich = 0                                 # dark mode = 0, Light mode = 1
 
-        # DELETE
-        # self.root.configure(bg="white")
-        # self.style = ThemedStyle(self.root)
-        # self.style.theme_use('adapta')
-        # self.text = TER.terminal_maker(self.root)
-        # self.text.config(state="disabled")
+        self.text = TER.terminal_maker(self.root)
+        self.text.configure(state="disabled")
         self.package_no = 0                                 # Number of packages
 
 # Implementation to create an object of updater class from updates.py file to intialize the updater menu in tkinter
     def updatess(self):
         Apps = UPDT.Updater()
 
-# Implementation for dark mode using the "equilux" theme
+# Implementation for dark mode
     def darkmd(self):
-        if self.dkmd == 0:
-            self.style.theme_use("equilux")
-            
-            bg = self.style.lookup('TLabel', 'background')
-            fg = self.style.lookup('TLabel', 'foreground')
-            self.root.configure(bg=self.style.lookup('TLabel', 'background'))
-            self.style.configure('TButton', foreground="white", highlightthickness=5, highlightbackground='#3E4149', highlightforeground="white", activebackground="black")
-            self.style.configure('TLabel', foreground="white", highlightthickness=5, highlightbackground='#3E4149', highlightforeground="white", activebackground="black")
-            self.style.configure('TEntry', foreground="white", selectforeground='black', selectbackground='#7FFFD4', highlightbackground='#3E4149', highlightforeground="white", activebackground="black")
-            self.dkmd = 1
+        if self.mode_swtich == 0:
+            self.mode = tk.set_appearance_mode("light")
+            self.mode_swtich = 1
         else:
-            self.disableDarkmd()
+            self.mode = tk.set_appearance_mode("dark")
+            self.mode_swtich = 0
 
-# Implementation for light mode using the "adapta" theme
-    def disableDarkmd(self):
-        self.root.configure(bg="white")
-        self.style = ThemedStyle(self.root)
-        self.style.theme_use('adapta')
-        self.text = TER.terminal_maker(self.root)
-        self.text.config(state="disabled")
-        self.dkmd = 0
 
 # Function to make a request to pypi and get all the package's names
     def fetch(self):
@@ -121,12 +102,12 @@ class App:
         self.variable = tk.StringVar()
         self.butts = []                         # To store button ids for the purpose to get to know the details of the button clicked
         for i in range(No_of_butt):
-            lab = ttk.Label(self.root, text=str(i+1) + "\t" + self.str_match[i])        # Creating a label
-            lab.place(x=15, y=80+(i*40), width=600, height=25)
+            lab = tk.CTkLabel(self.root, text=str(i+1) + "\t" + self.str_match[i])        # Creating a label
+            lab.place(x=15, y=80+(i*40))
 
-            butt = ttk.Button(self.root, text="Install", command=lambda i=i: self.get_value(i)) # Creating a button
-            self.butts.append(butt)                                                 # Appending the unique button id to the list prviously made
-            butt.place(x=600, y=80+(i*40), width=120, height=30)
+            butt = tk.CTkButton(self.root, text="Install", command=lambda i=i: self.get_value(i)) # Creating a button
+            self.butts.append(butt)                                                 # Appending the unique button id to the list previously made
+            butt.place(x=600, y=80+(i*40))
 
 # Function to search for 10 results for the user input query  
     def search(self, *args):
@@ -143,25 +124,26 @@ class App:
 
 # Creating the main GUI for application    
     def gui(self):
-        lab = ttk.Label(self.root,text="Search")    # Search Label
-        lab.place(x=5, y=5, width=120, height=25)
+        lab = tk.CTkLabel(self.root,text="Search")    # Search Label
+        lab.place(x=5, y=5)
 
-        self.entr = ttk.Entry(self.root)            # Input for query
-        self.entr.place(x = 70, y = 5, width=600, height=25 )   
-        self.entr.focus()                           # To make widget default to take input wihout clicking on it, after openeing the app
+        self.entr = tk.CTkEntry(self.root, width=620, placeholder_text="Type library name")            # Input for query
+        self.root.update()
+        self.entr.place(x = 70, y = 5) 
+        self.entr.focus_set()                           # To make widget default to take input wihout clicking on it, after openeing the app
 
-        butt = ttk.Button(self.root, text="Search Index", command=self.search)  # Search button
-        butt.place(x=700, y=5, width=120, height=25)
+        butt = tk.CTkButton(self.root, text="Search Index", command=self.search)  # Search button
+        butt.place(x=700, y=5)
         self.root.bind("<Return>", self.search)                                 # Bind the button with "Enter" button to search function
         # butt.focus()
 
-        bt_darkmd = ttk.Button(self.root, text="Darkmode", command=self.darkmd) # Dark mode button
-        bt_darkmd.place(x=870, y=5, width=120, height=25)
+        bt_darkmd = tk.CTkButton(self.root, text="Darkmode", command=self.darkmd) # Dark mode button
+        bt_darkmd.place(x=870, y=5)
 
-        update_butt = ttk.Button(self.root, text="Updates", command=self.updatess)# Updates tab (To be integrated)
-        update_butt.place(x=870, y=460, width=120, height=25)
+        update_butt = tk.CTkButton(self.root, text="Updates", command=self.updatess)# Updates tab (To be integrated)
+        update_butt.place(x=870, y=460)
         self.root.mainloop()
 
 f = App()
-f.fetch()
+#f.fetch()
 f.gui()

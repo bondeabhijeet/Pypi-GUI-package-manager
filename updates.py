@@ -1,37 +1,46 @@
-from tkinter import *
-import tkinter as tk
-from tkinter import ttk
-from ttkthemes import ThemedStyle
+import customtkinter as tk
 import installed as INST
 import requests
 import subprocess
+import threading
 # import terminal as TER
 
 # Update class
 
 class Updater:
+
     # To update a specific library/package
-    def upgrade_lib(self, i):
+    def upgrade_lib(self, i, btn):
         try:
             print(i)
-            install_args = ['pip', 'install', '--upgrade' , i]                                          # Command line arguments
             self.status_label.configure(text=f"Status: updating {i}")                                   # Updating status on the label
-            output = subprocess.Popen( install_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE )   # Executing the command to upgrade the package/library
-            stdout, stderr = output.communicate()
+            self.UPDroot.update_idletasks()
 
-            if output.returncode == 0:
-                print("Command executed successfully.")
-                index_to_delete = self.update_required.index(i)
-                self.text.delete(f"{index_to_delete}.0", f"{index_to_delete + 2}.0")
-                self.status_label.configure(text=f"Status: Processed {i}")                              # Updating the status on the label
-            else:
-                print(f"Command failed with return code: {output.returncode}")
-                print(f"Error message:\n{stderr.decode('utf-8')}")
-                self.status_label.configure(text=f"Status: Error in {i}")                               # Updating the status on the label
+            btn.configure(text="Updating...", state="disabled")
+
+            def run_upgrade():
+                install_args = ['pip', 'install', '--upgrade' , i]                                          # Command line arguments
+                output = subprocess.Popen( install_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE )   # Executing the command to upgrade the package/library
+                stdout, stderr = output.communicate()
+
+                if output.returncode == 0:
+                    print("Command executed successfully.")
+                    index_to_delete = self.update_required.index(i)
+                    #self.text.delete(f"{index_to_delete}.0", f"{index_to_delete + 2}.0")
+                    self.status_label.configure(text=f"Status: Processed {i}")                              # Updating the status on the label
+                    btn.configure(text="Updated", state="disabled")
+                else:
+                    print(f"Command failed with return code: {output.returncode}")
+                    print(f"Error message:\n{stderr.decode('utf-8')}")
+                    self.status_label.configure(text=f"Status: Error in {i}")                               # Updating the status on the label
+                    btn.configure(text="Error!!!")
+                INST.get_installed()                                                                        # Updating the update.txt, a list of installed libraries  
+                self.installed_libs = INST.clean_version()
+
+            threading.Thread(target=run_upgrade).start()
         except Exception as e:
             print("Exception:", str(e))
-        INST.get_installed()                                                                        # Updating the update.txt, a list of installed libraries  
-        self.installed_libs = INST.clean_version()
+        
         # print(output)                                                                               # Printing the output from the exectuted command
 
 
@@ -41,7 +50,11 @@ class Updater:
         self.UPDroot.update_idletasks() # Update the label immediately since it gets scheduled for the next event, by default to get updated
         INST.get_installed()                    # Get the list of installed libraries
         self.installed_libs = INST.clean_version()
+
         self.update_len = 100/(len((self.installed_libs)))  # For creating the progress bar to display how many libraries are checked
+        self.progress_bar.configure(determinate_speed = self.update_len)
+
+        
 
         self.sess = requests.Session()            # Creating a session for the multiple requests that are going to be made to check updates of each and every package
         
@@ -49,7 +62,8 @@ class Updater:
         for lib in self.installed_libs:                                     # itterating through installed libraries
             
             self.UPDroot.update_idletasks()
-            self.progress_bar['value'] += self.update_len
+            self.progress_bar.step()
+            # self.progress_bar['value'] += self.update_len
             
             self.label_updates.configure(text=f"                {lib[0]}               ")
             try:                                                            # tring to get the latest version of the installed library
@@ -72,11 +86,18 @@ class Updater:
         else:                                           # If updates are available
             self.status_label.configure(text=f"     Status: Updates are available ({len(self.update_required)})     ")
 
-        for lib in self.update_required:                # Creating buttons and lables for all the packages that need to be update 
-            button1 = ttk.Button(self.UPDroot, text=f"Update", command=lambda i=lib: self.upgrade_lib(i))  # Buttons binded with button id so as to know which button is pressed to upgrade the package
-            # self.statusIndicator.configure(text=f"Status: upgraded {i}")
-            self.text.window_create("end", window=button1)   # Creating a window to display button and label
-            self.text.insert("end", f"\t{lib}\n")           # Inserting the button and label combo inside the window created
+
+        scrollable_frame = tk.CTkScrollableFrame(self.UPDroot, width=600, height=500, label_text="Avaliable Updates")
+        scrollable_frame.pack()
+
+
+        for i in range(len(self.update_required)):
+            label_library_name = tk.CTkLabel(scrollable_frame, text=self.update_required[i])
+            label_library_name.grid(row=i, column=0, padx=115, pady=5)
+
+            self.library_update_button = tk.CTkButton(scrollable_frame, text="Update")
+            self.library_update_button.configure(command=lambda j=self.update_required[i], btn=self.library_update_button: self.upgrade_lib(j, btn))
+            self.library_update_button.grid(row=i, column=1, padx=5, pady=5, ipady=4)
     
     # def UpdateAll(self):
     #     print()
@@ -86,11 +107,13 @@ class Updater:
     #         self.text = TER.terminal(output, self.text, self.package_no)
 
     def __init__(self):
-        self.UPDroot = tk.Tk()                              # root tkinter window
-        self.style = ThemedStyle(self.UPDroot)              # To use themes
-        self.style.theme_use("adapta")                      # "adapta" theme used
-        self.UPDroot.title("Upgrade libraries")
-        self.UPDroot["bg"] = "white"                        # Setting the background color to white
+        self.UPDroot = tk.CTk()                              # root tkinter window
+        self.UPDroot.geometry("800x800")
+        
+        # self.style = ThemedStyle(self.UPDroot)              # To use themes
+        # self.style.theme_use("adapta")                      # "adapta" theme used
+        # self.UPDroot.title("Upgrade libraries")
+        # self.UPDroot["bg"] = "white"                        # Setting the background color to white
 
         #self.UPDroot.iconbitmap("favicon.ico")
 
@@ -101,28 +124,18 @@ class Updater:
         self.UPDroot.mainloop()
 
     def setup_gui(self):
-        self.label_updates = ttk.Label(self.UPDroot, text="Updates")
+        self.label_updates = tk.CTkLabel(self.UPDroot, text="Updates")
         self.label_updates.pack(padx=20, pady=10)
 
-        self.progress_bar = ttk.Progressbar(self.UPDroot, orient=tk.HORIZONTAL, length=400, mode='determinate')      # Progress bar to indicate the progress of checking updates
-        self.progress_bar.pack(expand=True)                 # expand: https://stackoverflow.com/questions/28089942/difference-between-fill-and-expand-options-for-tkinter-pack-method
+        self.progress_bar = tk.CTkProgressBar(self.UPDroot, width=400, mode='determinate')      # Progress bar to indicate the progress of checking updates
+        self.progress_bar.pack(padx=20, pady=10)                 # expand: https://stackoverflow.com/questions/28089942/difference-between-fill-and-expand-options-for-tkinter-pack-method
+        self.progress_bar.set(0)
 
-        self.start_button = ttk.Button(self.UPDroot, text='Start', command=self.CheckUpdates)   # Button to start checking for updates
+        self.start_button = tk.CTkButton(self.UPDroot, text='Start', command=self.CheckUpdates)   # Button to start checking for updates
         self.start_button.pack(pady=5)
 
-        self.status_label = ttk.Label(self.UPDroot, text="Status: Idle")                        # Updating the status on the label
+        self.status_label = tk.CTkLabel(self.UPDroot, text="Status: Idle")                        # Updating the status on the label
         self.status_label.pack(padx=20, pady=10)
-
-        self.text = tk.Text(self.UPDroot)
-        self.setup_scrollbar()
-
-        self.text.pack(side="left")
-
-    # Implementation of scroll bar binding it with the list of buttons and labels
-    def setup_scrollbar(self):
-        self.scrollbar = ttk.Scrollbar(self.UPDroot, command=self.text.yview)
-        self.scrollbar.pack(side="right", fill=tk.Y)
-        self.text.configure(yscrollcommand=self.scrollbar.set)
 
 # # Testing        
 app = Updater()
