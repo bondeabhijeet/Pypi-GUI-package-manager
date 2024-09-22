@@ -1,4 +1,4 @@
-import requests
+# import requests
 from bs4 import BeautifulSoup
 import json
 import customtkinter as tk
@@ -6,11 +6,13 @@ import installed as INST
 import subprocess
 import terminal as TER
 import updates as UPDT
+import fetch as FETCH
+import threading
 
 class App:
     def __init__(self):
         print("Firing up the application!")
-        self.fetch_list = "https://pypi.org/simple/"        # PYPI request URL
+        self.fetch_url = "https://pypi.org/simple/"        # PYPI request URL
         self.fetched_data = "fetched_html.html"             # filename for html code fetched from pypi
         self.stark = {}
         self.storage = "storage.json"                       # Json filename in which all the pip package names are stored
@@ -39,40 +41,19 @@ class App:
             self.mode = tk.set_appearance_mode("dark")
             self.mode_swtich = 0
 
-
-# Function to make a request to pypi and get all the package's names
-    def fetch(self):
-        print("Fetching the data!")
-        response = requests.get(self.fetch_list).text   # make the request
-        print("Request completed")
-        with open(self.fetched_data, 'w') as f:         # write the fetched HTML code to a html file
-            f.write(response)
-        self.json_maker()                               # Parse the html file and create a json file
-        print("JSON file created")
-
-        # self.root.iconbitmap("favicon.ico")             # Setting custom icon to the window
-
-# Implementation to make a json file from html file    
-    def json_maker(self):
-        print("Creating JSON file [may take few seconds...]")
-        with open(self.fetched_data, 'r') as f:             # reading the html file
-            self.html_data = f.read()
+# Implementation to make request to pypi and create a json file
+    def fettchh(self):
+        self.refresh_json.configure(text="Refreshing...")
+        self.refresh_json.configure(state="disabled")
+        self.root.update()
+        FETCH.fetch(self)
+        self.refresh_json.configure(text="Refreshed")
+        self.refresh_json.configure(state="normal")
         
-        tags = BeautifulSoup(self.html_data, 'lxml').find_all('a')  # Fetching all the "a" tags
-
-        with open(self.storage, 'w') as f:                  # writing all the parsed results to a json file for better navigation
-            for tag in tags:
-                self.stark[f"{tag.text}"] = ""
-            json.dump(self.stark, f)
-
-        with open(self.storage, 'r') as f:                  # Reading the same json file and fetching all the keys into a dict
-            self.all_repos = json.load(f).keys()
-            # print(all_repos)
     
     def get_value(self, i):
         INST.get_installed()
         if self.str_match[i] in INST.clean():
-            # print("Updating...")
             self.butts[i].configure(text="Updating")
             self.package_no = self.package_no + 1
             install_args = ['pip', 'install', '--upgrade' , f'{self.str_match[i]}']
@@ -99,13 +80,14 @@ class App:
             
 # Creating and storing buttons and their ids for every package displayed  
     def index(self, No_of_butt):
+        print("COOL")
         self.variable = tk.StringVar()
         self.butts = []                         # To store button ids for the purpose to get to know the details of the button clicked
         for i in range(No_of_butt):
             lab = tk.CTkLabel(self.root, text=str(i+1) + "\t" + self.str_match[i])        # Creating a label
             lab.place(x=15, y=80+(i*40))
 
-            butt = tk.CTkButton(self.root, text="Install", command=lambda i=i: self.get_value(i)) # Creating a button
+            butt = tk.CTkButton(self.root, text="Install", command=lambda i=i: threading.Thread(target=self.get_value, args=(i, )).start()) # Creating a button
             self.butts.append(butt)                                                 # Appending the unique button id to the list previously made
             butt.place(x=600, y=80+(i*40))
 
@@ -139,10 +121,13 @@ class App:
         bt_darkmd = tk.CTkButton(self.root, text="Darkmode", command=self.darkmd) # Dark mode button
         bt_darkmd.place(x=870, y=5)
 
+        self.refresh_json = tk.CTkButton(self.root, text="Update List", command=lambda: threading.Thread(target=self.fettchh).start())
+        self.refresh_json.place(x=870, y=400)
+
         update_butt = tk.CTkButton(self.root, text="Updates", command=self.updatess)# Updates tab (To be integrated)
         update_butt.place(x=870, y=460)
         self.root.mainloop()
 
 f = App()
-f.fetch()
+
 f.gui()

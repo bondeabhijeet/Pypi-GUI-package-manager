@@ -54,8 +54,6 @@ class Updater:
         self.update_len = 100/(len((self.installed_libs)))  # For creating the progress bar to display how many libraries are checked
         self.progress_bar.configure(determinate_speed = self.update_len)
 
-        
-
         self.sess = requests.Session()            # Creating a session for the multiple requests that are going to be made to check updates of each and every package
         
         self.status_label.configure(text="Status: Checking for updates") # Updating the status on the label
@@ -63,7 +61,6 @@ class Updater:
             
             self.UPDroot.update_idletasks()
             self.progress_bar.step()
-            # self.progress_bar['value'] += self.update_len
             
             self.label_updates.configure(text=f"                {lib[0]}               ")
             try:                                                            # tring to get the latest version of the installed library
@@ -110,17 +107,11 @@ class Updater:
         self.UPDroot = tk.CTk()                              # root tkinter window
         self.UPDroot.geometry("800x800")
         
-        # self.style = ThemedStyle(self.UPDroot)              # To use themes
-        # self.style.theme_use("adapta")                      # "adapta" theme used
-        # self.UPDroot.title("Upgrade libraries")
-        # self.UPDroot["bg"] = "white"                        # Setting the background color to white
-
         #self.UPDroot.iconbitmap("favicon.ico")
 
         self.update_required = []                           # A list of all the packages that will need update (filled later on)
 
         self.setup_gui()
-
         self.UPDroot.mainloop()
 
     def setup_gui(self):
