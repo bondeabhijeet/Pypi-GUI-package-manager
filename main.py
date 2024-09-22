@@ -135,7 +135,6 @@ class App:
         butt = tk.CTkButton(self.root, text="Search Index", command=self.search)  # Search button
         butt.place(x=700, y=5)
         self.root.bind("<Return>", self.search)                                 # Bind the button with "Enter" button to search function
-        # butt.focus()
 
         bt_darkmd = tk.CTkButton(self.root, text="Darkmode", command=self.darkmd) # Dark mode button
         bt_darkmd.place(x=870, y=5)
@@ -145,5 +144,5 @@ class App:
         self.root.mainloop()
 
 f = App()
-#f.fetch()
+f.fetch()
 f.gui()

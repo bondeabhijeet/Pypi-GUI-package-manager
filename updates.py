@@ -138,4 +138,4 @@ class Updater:
         self.status_label.pack(padx=20, pady=10)
 
 # # Testing        
-app = Updater()
+# app = Updater()
