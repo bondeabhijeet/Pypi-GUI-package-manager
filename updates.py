@@ -6,7 +6,6 @@ import threading
 # import terminal as TER
 
 # Update class
-
 class Updater:
 
     # To update a specific library/package
@@ -68,7 +67,9 @@ class Updater:
                 if lib[1] == latest_version:            # If the installed version of library is same as latest version
                     print(f"{lib[0]} Latest version")
                 else:                                   # If the version is not latest then update is required
-                    self.update_required.append(lib[0]) if lib[0] not in self.update_required else None # Appending the name to a list
+                    library_info = [lib[0], lib[1], latest_version]
+                    print(library_info)
+                    self.update_required.append(library_info) if library_info not in self.update_required else None # Appending the name to a list
                     print(f"{lib[0]} update required")  
             except:                                     # If any error occurs then skip the package
                 print(f"Skipped {lib[0]}")
@@ -76,25 +77,36 @@ class Updater:
         with open('update.txt', 'w') as f:              # Writing the list of libraries that need update to a txt file (update.txt)
             for i in self.update_required:
                 f.write(f"{i}\n")
-        print(self.update_required)
+        # print(self.update_required)
 
         if len(self.update_required) == 0:              # If all the libraries are upto date (no updates available)
-            self.status_label.configure(text="Status: No updated available")
+            self.status_label.configure(text="Status: No updates available")
         else:                                           # If updates are available
             self.status_label.configure(text=f"     Status: Updates are available ({len(self.update_required)})     ")
 
 
-        scrollable_frame = tk.CTkScrollableFrame(self.UPDroot, width=600, height=500, label_text="Avaliable Updates")
+        scrollable_frame = tk.CTkScrollableFrame(self.UPDroot, width=800, height=500, label_text="Avaliable Updates")
         scrollable_frame.pack()
+
+        column_names = ["Library Name", "   ", "Current Version", "Latest Version"]
+        for i in range(len(column_names)):
+            column_names_label = tk.CTkLabel(scrollable_frame, text=column_names[i], font=("Helvetica", 13, "bold"))
+            column_names_label.grid(row=0, column=i, padx=10, pady=7)
 
 
         for i in range(len(self.update_required)):
-            label_library_name = tk.CTkLabel(scrollable_frame, text=self.update_required[i])
-            label_library_name.grid(row=i, column=0, padx=115, pady=5)
+            label_library_name = tk.CTkLabel(scrollable_frame, text=self.update_required[i][0])
+            label_library_name.grid(row=i+1, column=0, padx=115, pady=5)
 
             self.library_update_button = tk.CTkButton(scrollable_frame, text="Update")
-            self.library_update_button.configure(command=lambda j=self.update_required[i], btn=self.library_update_button: self.upgrade_lib(j, btn))
-            self.library_update_button.grid(row=i, column=1, padx=5, pady=5, ipady=4)
+            self.library_update_button.configure(command=lambda j=self.update_required[i][0], btn=self.library_update_button: self.upgrade_lib(j, btn))
+            self.library_update_button.grid(row=i+1, column=1, padx=5, pady=5, ipady=4)
+
+            installed_version_label = tk.CTkLabel(scrollable_frame, text=self.update_required[i][1])
+            installed_version_label.grid(row=i+1, column=2, padx=5, pady=5)
+
+            latest_version_label = tk.CTkLabel(scrollable_frame, text=self.update_required[i][2])
+            latest_version_label.grid(row=i+1, column=3, padx=5, pady=5)
     
     # def UpdateAll(self):
     #     print()
